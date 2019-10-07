@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
     })
 })
 
-app.post('/user', (req, res) => {
+app.get('/user', (req, res) => {
     res.json({
         username: 'Yeo',
         email: 'yeo@gmail.com',
@@ -49,11 +49,57 @@ app.get('/db/create/:username/:email/:password', (req, res) => {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'myapp'
+        database: 'dbsample'
     })
 
     connection.connect()
     connection.query(`INSERT INTO accounts (username,email,password) VALUES ('${req.params.username}','${req.params.email}', '${req.params.password}')`, function (err, rows, fields) {
+        if (err) throw err
+
+        // console.log('The solution is: ', rows[0].solution)
+        res.json({
+            data:rows,
+            params: req.params,
+            username: req.params.username
+        })
+    })
+
+    connection.end()
+})
+
+app.get('/db/update/:username/:email/:password', (req, res) => {
+    var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'dbsample'
+    })
+
+    connection.connect()
+    connection.query(`UPDATE accounts SET username='${req.params.username}',email='${req.params.email}',password='${req.params.password}' WHERE id=1`, function (err, rows, fields) {
+        if (err) throw err
+
+        // console.log('The solution is: ', rows[0].solution)
+        res.json({
+            data:rows,
+            params: req.params,
+            username: req.params.username
+        })
+    })
+
+    connection.end()
+})
+
+app.get('/db/delete', (req, res) => {
+    var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'dbsample'
+    })
+
+    connection.connect()
+    connection.query(`DELETE FROM accounts WHERE id=1`, function (err, rows, fields) {
         if (err) throw err
 
         // console.log('The solution is: ', rows[0].solution)
