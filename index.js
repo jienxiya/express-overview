@@ -4,6 +4,8 @@ const app = express()
 const port = 3000
 var cors = require('cors')
 app.use(cors())
+var Pusher = require('pusher')
+
 
 app.get('/', (req, res) => {
     res.json({
@@ -12,7 +14,25 @@ app.get('/', (req, res) => {
     })
 })
 
-app.get('/user', (req, res) => {
+// pusher
+app.post('/pusher', (req, res) => {
+   var data = {
+        "data": req.query
+   }
+   var pusher = new Pusher({
+      appId: '906630',
+      key: '19f814902a00899fa4c5',
+      secret: 'f4d20401c2e102900b46',
+      cluster: 'ap1',
+      encrypted: true
+    });
+       pusher.trigger('my-channel', 'my-event', data); 
+       res.json({
+        message: 'Successful'
+    })
+})
+
+app.post('/user', (req, res) => {
     res.json({
         username: 'Yeo',
         email: 'yeo@gmail.com',
@@ -25,7 +45,7 @@ app.get('/db/retrieve/:username', (req, res) => {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'myapp'
+        database: 'midterms'
     })
 
     connection.connect()
@@ -49,7 +69,7 @@ app.get('/db/create/:username/:email/:password', (req, res) => {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'dbsample'
+        database: 'midterms'
     })
 
     connection.connect()
@@ -72,7 +92,7 @@ app.get('/db/update/:username/:email/:password', (req, res) => {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'dbsample'
+        database: 'midterms'
     })
 
     connection.connect()
@@ -95,7 +115,7 @@ app.get('/db/delete', (req, res) => {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'dbsample'
+        database: 'midterms'
     })
 
     connection.connect()
@@ -112,5 +132,28 @@ app.get('/db/delete', (req, res) => {
 
     connection.end()
 })
+
+//MIDTERMS
+app.get('/db/create/:post_id/:user_id/:user_post/:username', (req, res) => {
+    var connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'midterms'
+    })
+
+    connection.connect()
+    connection.query(`INSERT INTO posts (post_id,user_id,user_post,username) VALUES ('${req.params.user_post}')`, function (err, rows, fields) {
+        if (err) throw err  
+        res.json({
+            data:rows,
+            params: req.params,
+            username: req.params.username
+        })
+    })
+
+    connection.end()
+})
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

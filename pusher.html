@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/5.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('19f814902a00899fa4c5', {
+      cluster: 'ap1',
+      forceTLS: true
+    });
+
+    var account = {
+      account_id: 1
+    }
+
+    var notification = []
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      if(account.account_id == parseInt(data.data.account_id)){
+        notification.unshift(data.data)
+      }else{
+        console.log("Not allowed")
+      }
+      console.log(notifications)
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
+</body>
